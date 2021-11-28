@@ -32,6 +32,7 @@ void *funcaoThread(void *threadid)
 
 int main()
 {
+    printf("Insira a quantidade de threads a serem criadas:\n");
     int numeroDeThreads;
     scanf("%d",&numeroDeThreads);
     pthread_t threads[numeroDeThreads];
