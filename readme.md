@@ -1,4 +1,4 @@
-## <p align='center'> <font color='#00bea2'> Trabalho de Sistemas Operacionais para Sistemas de Informação </font>
+## <p align='center'> Trabalho de Sistemas Operacionais para Sistemas de Informação 
 
 ### <p align='right'> Discente: Mayara Gualberto
 

@@ -43,7 +43,7 @@ int main()
         rc = pthread_create(&threads[t], NULL, funcaoThread, (void *)t);
         if (rc)
         {
-            printf("Erro. Não sei pra quê serve isso ainda, %d\n", rc);
+            printf("Erro. %d\n", rc);
             exit(-1);
         }
     }
