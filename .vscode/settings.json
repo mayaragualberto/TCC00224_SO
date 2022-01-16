@@ -3,6 +3,9 @@
         "array": "c",
         "string_view": "c",
         "initializer_list": "c",
-        "utility": "c"
-    }
+        "utility": "c",
+        "syscall.h": "c",
+        "pthread.h": "c"
+    },
+    "C_Cpp.errorSquiggles": "Enabled"
 }

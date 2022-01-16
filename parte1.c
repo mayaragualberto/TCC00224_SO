@@ -19,7 +19,7 @@ void *funcaoThread(void *threadid)
     /* Utilizando o gettid() para obter o ID:
     ---> Precisa incluir a biblioteca #include <sys/syscall.h>
     ---> 2 formas de obter: chamando a instrução do system call ou usando o gettid()
-    ---> O valor rertonado é o mesmo, referente ao ID de thread do chamador, valor int do tipo pid_t */
+    ---> O valor rertonado é o diferente, referente ao ID de thread do chamador, valor int do tipo pid_t */
 
     // Forma 1 do gettid:
     //long tid = syscall(SYS_gettid);
