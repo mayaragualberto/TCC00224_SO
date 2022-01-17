@@ -8,12 +8,12 @@
 
 #define TAM 100000
 
-/* 
+/*
 --> Tempo de execução observado (em ms)*:
     Exec. 1 |   Exec. 2 |   Exec. 3 |   Exec.4  |   Exec.5
 1.  1.732   |   4.304   |   1.671   |   1.790   |   2.264
 2.  4.168   |   3.955   |   3.133   |   3.036   |   1.634
-3.  3.768   |   1.796   |   4.667   |   4.033   |   3.518 
+3.  3.768   |   1.796   |   4.667   |   4.033   |   3.518
 ~ legenda: 1. com threads e semaforos; 2. com threads; 3. sequencial.
 *Considerando a NÃO impressão do vetor.
 
@@ -31,13 +31,12 @@
 ~ legenda: 1. com threads e semaforos; 2. com threads.
  */
 
-
-int *vectorImparesSem; // Vetor sem os numeros pares usando threads e semaforo
-int *vectorImpares; // Vetor sem os numeros pares usando threads
+int *vectorImparesSem;   // Vetor sem os numeros pares usando threads e semaforo
+int *vectorImpares;      // Vetor sem os numeros pares usando threads
 int *vectorImparesSemTh; // Vetor sem os numeros pares sem usar threads
 
-int *vectorNaoMultiCincoSem;// Vetor sem os numeros multiplos de cinco usando threads e semaforo
-int *vectorNaoMultiCinco; // Vetor sem os numeros multiplos de cinco usando threads
+int *vectorNaoMultiCincoSem;   // Vetor sem os numeros multiplos de cinco usando threads e semaforo
+int *vectorNaoMultiCinco;      // Vetor sem os numeros multiplos de cinco usando threads
 int *vectorNaoMultiCincoSemTh; // Vetor sem os numeros multiplos de sem usar threads
 
 /* Utilizando duas threads e com utilização de semáforos*/
@@ -51,7 +50,7 @@ void *removeParesSem(void *vectorRandRecebido)
     int *vectorRand = (int *)vectorRandRecebido;
     int qtdImpares = 0;
     // Calcular o tamanho do vetor de acordo com a quantidade de números ímpares
-    for (int i = 0; i <= TAM; i++)
+    for (int i = 0; i < TAM; i++)
     {
         if (vectorRand[i] % 2 != 0)
         {
@@ -61,8 +60,8 @@ void *removeParesSem(void *vectorRandRecebido)
     // Cria um vetor com o tamanho da quantidade de números ímpares
     vectorImparesSem = (int *)malloc(sizeof *vectorImparesSem * qtdImpares);
     // Preenche o vetor com os números ímpares, ou seja, remove os pares de trás para frente
-    int j = qtdImpares-1;
-    for (int i = TAM-1; i >=0 ; i--)
+    int j = qtdImpares - 1;
+    for (int i = TAM - 1; i >= 0; i--)
     {
         if (vectorRand[i] % 2 != 0)
         {
@@ -116,8 +115,8 @@ void *removeMultiCincoSem(void *vectorRandRecebido)
     // Cria um vetor com o tamanho da quantidade de números que não são múltiplos de cinco
     vectorNaoMultiCincoSem = (int *)malloc(sizeof *vectorNaoMultiCincoSem * qtdNaoMultiCinco);
     // Preenche o vetor com os números que não forem múltiplos de cinco de trás para frente
-    int j = qtdNaoMultiCinco-1;
-    for (int i = TAM-1; i >=0 ; i--)
+    int j = qtdNaoMultiCinco - 1;
+    for (int i = TAM - 1; i >= 0; i--)
     {
         if (vectorRand[i] % 5 != 0)
         {
@@ -172,8 +171,8 @@ void *removePares(void *vectorRandRecebido)
     // Cria um vetor com o tamanho da quantidade de números ímpares
     vectorImpares = (int *)malloc(sizeof *vectorImpares * qtdImpares);
     // Preenche o vetor com os números ímpares, ou seja, remove os pares de trás para frente
-    int j = qtdImpares-1;
-    for (int i = TAM-1; i >=0 ; i--)
+    int j = qtdImpares - 1;
+    for (int i = TAM - 1; i >= 0; i--)
     {
         if (vectorRand[i] % 2 != 0)
         {
@@ -224,8 +223,8 @@ void *removeMultiCinco(void *vectorRandRecebido)
     // Cria um vetor com o tamanho da quantidade de números que não são múltiplos de cinco
     vectorNaoMultiCinco = (int *)malloc(sizeof *vectorNaoMultiCinco * qtdNaoMultiCinco);
     // Preenche o vetor com os números que não forem múltiplos de cinco de trás para frente
-    int j = qtdNaoMultiCinco-1;
-    for (int i = TAM-1; i >= 0; i--)
+    int j = qtdNaoMultiCinco - 1;
+    for (int i = TAM - 1; i >= 0; i--)
     {
         if (vectorRand[i] % 5 != 0)
         {
@@ -269,7 +268,7 @@ void *removeParesSemTh(void *vectorRandRecebido)
     int *vectorRand = (int *)vectorRandRecebido;
     int qtdImpares = 0;
     // Calcular o tamanho do vetor de acordo com a quantidade de números ímpares
-    for (int i = 0; i <= TAM; i++)
+    for (int i = 0; i < TAM; i++)
     {
         if (vectorRand[i] % 2 != 0)
         {
@@ -279,8 +278,8 @@ void *removeParesSemTh(void *vectorRandRecebido)
     // Cria um vetor com o tamanho da quantidade de números ímpares
     vectorImparesSemTh = (int *)malloc(sizeof *vectorImparesSemTh * qtdImpares);
     // Preenche o vetor com os números ímpares, ou seja, remove os pares de trás para frente
-    int j = qtdImpares-1;
-    for (int i = TAM-1; i >=0; i--)
+    int j = qtdImpares - 1;
+    for (int i = TAM - 1; i >= 0; i--)
     {
         if (vectorRand[i] % 2 != 0)
         {
@@ -331,8 +330,8 @@ void *removeMultiCincoSemTh(void *vectorRandRecebido)
     // Cria um vetor com o tamanho da quantidade de números que não são múltiplos de cinco
     vectorNaoMultiCincoSemTh = (int *)malloc(sizeof *vectorNaoMultiCincoSemTh * qtdNaoMultiCinco);
     // Preenche o vetor com os números que não forem múltiplos de cinco de trás para frente
-    int j = qtdNaoMultiCinco-1;
-    for (int i = TAM-1; i >=0 ; i--)
+    int j = qtdNaoMultiCinco - 1;
+    for (int i = TAM - 1; i >= 0; i--)
     {
         if (vectorRand[i] % 5 != 0)
         {
@@ -392,6 +391,10 @@ int main()
     srand(time(NULL));
     int vectorRand[TAM];
     printf("Vetor de tamanho %d criado. ", TAM);
+    for (int i = 0; i < TAM; i++)
+    {
+        vectorRand[i] = rand() % 100 + 1;
+    }
 
     char view;
     printf("Deseja visualizar os números do vetor? [S/N]: ");
@@ -408,7 +411,6 @@ int main()
         printf("\nOs números aleatórios criados foram:\n");
         for (int i = 0; i < TAM; i++)
         {
-            vectorRand[i] = rand() % 100 + 1;
             printf("%d ", vectorRand[i]);
         }
         break;
@@ -585,7 +587,7 @@ int main()
         printf("\nVetor com thread e vetor sequencial sao iguais?");
         verifica(vectorNaoMultiCinco, vectorNaoMultiCincoSemTh);
 
-        printf("\n\nFim.");
+        printf("\n\nFim.\n");
 
         return 0;
 

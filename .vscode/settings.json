@@ -7,7 +7,9 @@
         "syscall.h": "c",
         "pthread.h": "c",
         "semaphore.h": "c",
-        "stdlib.h": "c"
+        "stdlib.h": "c",
+        "time.h": "c",
+        "stdbool.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

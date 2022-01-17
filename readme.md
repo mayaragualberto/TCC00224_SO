@@ -41,7 +41,7 @@ g++ parte2.c -o parte2 -lpthread
 
 > Execução:
 ```sh 
-g++ parte3.c -o parte3 -lpthread
+g++ parte3.c -o parte3 
 ```
 ```sh 
 ./parte3

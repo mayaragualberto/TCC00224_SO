@@ -2,11 +2,13 @@
 #include <pthread.h>
 #include <sys/syscall.h> // Para usar o syscall
 #include <stdlib.h>
+#include <unistd.h>
 
 void *funcaoThread(void *threadid)
 {
     long numDaThread = (long)threadid;
     numDaThread++;
+    sleep(1);
     char nomeDaThread[12];
     // Concatenar o número com o nome da thread:
     if (numDaThread<10) {snprintf(nomeDaThread,12,"thread_0%ld",numDaThread);}
@@ -14,7 +16,7 @@ void *funcaoThread(void *threadid)
 
     /* Utilizando pthread_self() para obter o ID:
     ---> O valor retornado é chamado de ID de thread POSIX*/
-    printf("Eu sou a thread %s e meu ID é %lu.\n", nomeDaThread, pthread_self());
+    printf("Eu sou a thread %s e meu ID é %lu\n", nomeDaThread, pthread_self());
 
     /* Utilizando o gettid() para obter o ID:
     ---> Precisa incluir a biblioteca #include <sys/syscall.h>
@@ -41,6 +43,7 @@ int main()
     int rc;
     for (t = 0; t < numeroDeThreads; t++)
     {
+        printf("Criando a thread %ld\n", t+1);
         rc = pthread_create(&threads[t], NULL, funcaoThread, (void *)t);
         if (rc)
         {
