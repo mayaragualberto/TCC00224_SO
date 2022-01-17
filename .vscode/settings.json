@@ -5,7 +5,9 @@
         "initializer_list": "c",
         "utility": "c",
         "syscall.h": "c",
-        "pthread.h": "c"
+        "pthread.h": "c",
+        "semaphore.h": "c",
+        "stdlib.h": "c"
     },
     "C_Cpp.errorSquiggles": "Enabled"
 }

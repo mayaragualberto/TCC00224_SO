@@ -1,27 +1,46 @@
 #include <stdio.h>
 #include <pthread.h>
-#include <sys/syscall.h> // Para usar o syscall
 #include <stdlib.h>
 #include <vector>
-#include <stdbool.h>
 #include <time.h>      // Para calcular o tempo de execução
 #include <unistd.h>    // Para colocar pausa entre impressões
 #include <semaphore.h> // Para utilizar semaforo
 
-#define TAM 5
+#define TAM 100000
 
-int *vectorImparesSem;
-int *vectorImpares;
-int *vectorImparesSemTh;
+/* 
+--> Tempo de execução observado (em ms)*:
+    Exec. 1 |   Exec. 2 |   Exec. 3 |   Exec.4  |   Exec.5
+1.  1.732   |   4.304   |   1.671   |   1.790   |   2.264
+2.  4.168   |   3.955   |   3.133   |   3.036   |   1.634
+3.  3.768   |   1.796   |   4.667   |   4.033   |   3.518 
+~ legenda: 1. com threads e semaforos; 2. com threads; 3. sequencial.
+*Considerando a NÃO impressão do vetor.
 
-int *vectorNaoMultiCincoSem;
-int *vectorNaoMultiCinco;
-int *vectorNaoMultiCincoSemTh;
+--> Verificação dos vetores gerados comparados com o sequencial.
+--- Remoção de pares:
+    Exec. 1 |   Exec. 2 |   Exec. 3 |   Exec.4  |   Exec.5
+1.  iguais  |   iguais  |   iguais  |   iguais  |   iguais
+2.  iguais  |   iguais  |   iguais  |   iguais  |   iguais
+~ legenda: 1. com threads e semaforos; 2. com threads.
 
-// Verificação se os resultados estão corretos:
+--- Remoção de múltiplos de cinco:
+    Exec. 1 |   Exec. 2 |   Exec. 3 |   Exec.4  |   Exec.5
+1.  iguais  |   iguais  |   iguais  |   iguais  |   iguais
+2.  iguais  |   iguais  |   iguais  |   iguais  |   iguais
+~ legenda: 1. com threads e semaforos; 2. com threads.
+ */
 
-/* Utilizando duas threads e com utilização de semáforos:
----> O tempo de execução obtido foi maior que os outros programas. */
+
+int *vectorImparesSem; // Vetor sem os numeros pares usando threads e semaforo
+int *vectorImpares; // Vetor sem os numeros pares usando threads
+int *vectorImparesSemTh; // Vetor sem os numeros pares sem usar threads
+
+int *vectorNaoMultiCincoSem;// Vetor sem os numeros multiplos de cinco usando threads e semaforo
+int *vectorNaoMultiCinco; // Vetor sem os numeros multiplos de cinco usando threads
+int *vectorNaoMultiCincoSemTh; // Vetor sem os numeros multiplos de sem usar threads
+
+/* Utilizando duas threads e com utilização de semáforos*/
 
 sem_t pares_lock, multiCinco_lock;
 
@@ -41,14 +60,14 @@ void *removeParesSem(void *vectorRandRecebido)
     }
     // Cria um vetor com o tamanho da quantidade de números ímpares
     vectorImparesSem = (int *)malloc(sizeof *vectorImparesSem * qtdImpares);
-    // Preenche o vetor com os números ímpares, ou seja, remove os pares
-    int j = 0;
-    for (int i = 0; i < TAM; i++)
+    // Preenche o vetor com os números ímpares, ou seja, remove os pares de trás para frente
+    int j = qtdImpares-1;
+    for (int i = TAM-1; i >=0 ; i--)
     {
         if (vectorRand[i] % 2 != 0)
         {
             vectorImparesSem[j] = vectorRand[i];
-            j++;
+            j--;
         }
     }
     int op;
@@ -96,14 +115,14 @@ void *removeMultiCincoSem(void *vectorRandRecebido)
     }
     // Cria um vetor com o tamanho da quantidade de números que não são múltiplos de cinco
     vectorNaoMultiCincoSem = (int *)malloc(sizeof *vectorNaoMultiCincoSem * qtdNaoMultiCinco);
-    // Preenche o vetor com os números que não forem múltiplos de cinco
-    int j = 0;
-    for (int i = 0; i < TAM; i++)
+    // Preenche o vetor com os números que não forem múltiplos de cinco de trás para frente
+    int j = qtdNaoMultiCinco-1;
+    for (int i = TAM-1; i >=0 ; i--)
     {
         if (vectorRand[i] % 5 != 0)
         {
             vectorNaoMultiCincoSem[j] = vectorRand[i];
-            j++;
+            j--;
         }
     }
 
@@ -136,8 +155,7 @@ void *removeMultiCincoSem(void *vectorRandRecebido)
     return 0;
 }
 
-/* Utilizando duas threads e sem utilização de semáforos:
----> O tempo de execução obtido foi menor que o programa com semáforos e maior que sem threads.: */
+/* Utilizando duas threads e sem utilização de semáforos */
 
 void *removePares(void *vectorRandRecebido)
 {
@@ -153,18 +171,18 @@ void *removePares(void *vectorRandRecebido)
     }
     // Cria um vetor com o tamanho da quantidade de números ímpares
     vectorImpares = (int *)malloc(sizeof *vectorImpares * qtdImpares);
-    // Preenche o vetor com os números ímpares, ou seja, remove os pares
-    int j = 0;
-    for (int i = 0; i < TAM; i++)
+    // Preenche o vetor com os números ímpares, ou seja, remove os pares de trás para frente
+    int j = qtdImpares-1;
+    for (int i = TAM-1; i >=0 ; i--)
     {
         if (vectorRand[i] % 2 != 0)
         {
             vectorImpares[j] = vectorRand[i];
-            j++;
+            j--;
         }
     }
     int op;
-    printf("\nVisualizar vetor apos remocao dos multiplos de 2? [1-Sim/2-Nao]: ");
+    printf("\nVisualizar vetor apos remoção dos múltiplos de 2? [1-Sim/2-Não]: ");
     scanf("%d", &op);
     switch (op)
     {
@@ -184,7 +202,7 @@ void *removePares(void *vectorRandRecebido)
     }
     default:
     {
-        printf("\nOpcao invalida! Gentileza reiniciar programa.\n");
+        printf("\nOpção inválida! Gentileza reiniciar programa.\n");
         break;
     }
     }
@@ -205,19 +223,19 @@ void *removeMultiCinco(void *vectorRandRecebido)
     }
     // Cria um vetor com o tamanho da quantidade de números que não são múltiplos de cinco
     vectorNaoMultiCinco = (int *)malloc(sizeof *vectorNaoMultiCinco * qtdNaoMultiCinco);
-    // Preenche o vetor com os números que não forem múltiplos de cinco
-    int j = 0;
-    for (int i = 0; i < TAM; i++)
+    // Preenche o vetor com os números que não forem múltiplos de cinco de trás para frente
+    int j = qtdNaoMultiCinco-1;
+    for (int i = TAM-1; i >= 0; i--)
     {
         if (vectorRand[i] % 5 != 0)
         {
             vectorNaoMultiCinco[j] = vectorRand[i];
-            j++;
+            j--;
         }
     }
 
     int op;
-    printf("\nVisualizar vetor apos remocao dos multiplos de 5? [1-Sim/2-Nao]: ");
+    printf("\nVisualizar vetor após remoção dos múltiplos de 5? [1-Sim/2-Nao]: ");
     scanf("%d", &op);
     switch (op)
     {
@@ -237,15 +255,14 @@ void *removeMultiCinco(void *vectorRandRecebido)
     }
     default:
     {
-        printf("\nOpcao invalida! Gentileza reiniciar programa.\n");
+        printf("\nOpção inválida! Gentileza reiniciar programa.\n");
         break;
     }
     }
     return 0;
 }
 
-/* Utilizando duas threads e sem utilização de semáforos:
----> O tempo de execução obtido foi menor que a execução sem thread. */
+/* Utilizando duas threads e sem utilização de semáforos */
 
 void *removeParesSemTh(void *vectorRandRecebido)
 {
@@ -261,18 +278,18 @@ void *removeParesSemTh(void *vectorRandRecebido)
     }
     // Cria um vetor com o tamanho da quantidade de números ímpares
     vectorImparesSemTh = (int *)malloc(sizeof *vectorImparesSemTh * qtdImpares);
-    // Preenche o vetor com os números ímpares, ou seja, remove os pares
-    int j = 0;
-    for (int i = 0; i < TAM; i++)
+    // Preenche o vetor com os números ímpares, ou seja, remove os pares de trás para frente
+    int j = qtdImpares-1;
+    for (int i = TAM-1; i >=0; i--)
     {
         if (vectorRand[i] % 2 != 0)
         {
             vectorImparesSemTh[j] = vectorRand[i];
-            j++;
+            j--;
         }
     }
     int op;
-    printf("\nVisualizar vetor apos remocao dos multiplos de 2? [1-Sim/2-Nao]: ");
+    printf("\nVisualizar vetor apos remoção dos múltiplos de 2? [1-Sim/2-Não]: ");
     scanf("%d", &op);
     switch (op)
     {
@@ -292,7 +309,7 @@ void *removeParesSemTh(void *vectorRandRecebido)
     }
     default:
     {
-        printf("\nOpcao invalida! Gentileza reiniciar programa.\n");
+        printf("\nOpção inválida! Gentileza reiniciar programa.\n");
         break;
     }
     }
@@ -313,19 +330,19 @@ void *removeMultiCincoSemTh(void *vectorRandRecebido)
     }
     // Cria um vetor com o tamanho da quantidade de números que não são múltiplos de cinco
     vectorNaoMultiCincoSemTh = (int *)malloc(sizeof *vectorNaoMultiCincoSemTh * qtdNaoMultiCinco);
-    // Preenche o vetor com os números que não forem múltiplos de cinco
-    int j = 0;
-    for (int i = 0; i < TAM; i++)
+    // Preenche o vetor com os números que não forem múltiplos de cinco de trás para frente
+    int j = qtdNaoMultiCinco-1;
+    for (int i = TAM-1; i >=0 ; i--)
     {
         if (vectorRand[i] % 5 != 0)
         {
             vectorNaoMultiCincoSemTh[j] = vectorRand[i];
-            j++;
+            j--;
         }
     }
 
     int op;
-    printf("\nVisualizar vetor apos remocao dos multiplos de 5? [1-Sim/2-Nao]: ");
+    printf("\nVisualizar vetor após remoção dos múltiplos de 5? [1-Sim/2-Nao]: ");
     scanf("%d", &op);
     switch (op)
     {
@@ -345,7 +362,7 @@ void *removeMultiCincoSemTh(void *vectorRandRecebido)
     }
     default:
     {
-        printf("\nOpcao invalida! Gentileza reiniciar programa.\n");
+        printf("\nOpcao inválida! Gentileza reiniciar programa.\n");
         break;
     }
     }
@@ -356,17 +373,18 @@ int verifica(int *v1, int *v2)
 {
     if (*v1 == *v2)
     {
-        printf("\n--> Sao iguais!");
+        printf("\n--> São iguais!");
     }
     else
     {
-        printf("\n--> Sao diferentes!");
+        printf("\n--> São diferentes!");
     }
     return 0;
 }
 
 int main()
 {
+    // Duas threads: t1 - remoção de números pares e t2 - remoção de múltiplos de cinco
     pthread_t t1, t2;
     printf("**** Parte 2 *****\n");
     sleep(1);
@@ -376,7 +394,7 @@ int main()
     printf("Vetor de tamanho %d criado. ", TAM);
 
     char view;
-    printf("Deseja visualizar os numeros do vetor? [S/N]: ");
+    printf("Deseja visualizar os números do vetor? [S/N]: ");
     scanf("%c", &view);
     switch (view)
     {
@@ -387,7 +405,7 @@ int main()
     case 'S':
     {
         // Imprime os elementos do vetor para verificar se foi criado corretamente
-        printf("\nOs numeros aleatorios criados foram:\n");
+        printf("\nOs números aleatórios criados foram:\n");
         for (int i = 0; i < TAM; i++)
         {
             vectorRand[i] = rand() % 100 + 1;
@@ -397,8 +415,7 @@ int main()
     }
     default:
     {
-        printf("Opcao invalida!\n");
-        printf("Gentileza reiniciar programa.\n");
+        printf("Opcao inválida! Gentileza reiniciar programa.\n");
         break;
     }
     }
@@ -408,8 +425,8 @@ int main()
     printf("1 - Programa COM threads COM semaforo;\n");
     printf("2 - Programa COM threads SEM semaforo;\n");
     printf("3 - Programa SEM threads.\n");
-    printf("4 - Programa automatico para comparar resultados.\n");
-    printf("Digite a opcao: ");
+    printf("4 - Programa automático para comparar resultados.\n");
+    printf("Digite a opção: ");
 
     scanf("%d", &opcao);
 
@@ -417,7 +434,7 @@ int main()
     {
     case 1:
     {
-        printf("\n\n***Opcao 1 selecionada: Programa COM threads COM semaforo.\n\n");
+        printf("\n\n***Opção 1 selecionada: Programa COM threads COM semaforo.\n\n");
 
         clock_t Ticks[2];
         Ticks[0] = clock();
@@ -429,7 +446,7 @@ int main()
         pthread_create(&t1, NULL, &removeParesSem, (void *)vectorRand);
         pthread_join(t1, NULL);
 
-        printf("\n\nRemovendo os numeros multiplos de 5 do vetor...\n");
+        printf("\n\nRemovendo os números múltiplos de 5 do vetor...\n");
         pthread_create(&t2, NULL, &removeMultiCincoSem, (void *)vectorRand);
         pthread_join(t2, NULL);
 
@@ -437,7 +454,7 @@ int main()
         sem_destroy(&multiCinco_lock);
 
         // Medição do tempo de execução gasto
-        printf("\n\n--> O tempo final de execucao do programa foi:\n");
+        printf("\n\n--> O tempo final de execução do programa foi:\n");
         Ticks[1] = clock();
         double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
         printf("Tempo gasto: %g ms.\n\n\n", Tempo);
@@ -456,16 +473,16 @@ int main()
         clock_t Ticks[2];
         Ticks[0] = clock();
 
-        printf("\n\nRemovendo os numeros pares do vetor...\n");
+        printf("\n\nRemovendo os números pares do vetor...\n");
         pthread_create(&t1, NULL, &removePares, (void *)vectorRand);
         pthread_join(t1, NULL);
 
-        printf("\n\nRemovendo os numeros multiplos de 5 do vetor...\n");
+        printf("\n\nRemovendo os números múltiplos de 5 do vetor...\n");
         pthread_create(&t2, NULL, &removeMultiCinco, (void *)vectorRand);
         pthread_join(t2, NULL);
 
         // Medição do tempo de execução gasto
-        printf("\n\n--> O tempo final de execucao do programa foi:\n");
+        printf("\n\n--> O tempo final de execução do programa foi:\n");
         Ticks[1] = clock();
         double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
         printf("Tempo gasto: %g ms.\n", Tempo);
@@ -488,7 +505,7 @@ int main()
         removeMultiCincoSemTh(vectorRand);
 
         // Medição do tempo de execução gasto
-        printf("\n\n--> Tempo de execucao:\n");
+        printf("\n\n--> Tempo de execução:\n");
         Ticks[1] = clock();
         double Tempo = (Ticks[1] - Ticks[0]) * 1000.0 / CLOCKS_PER_SEC;
         printf("Tempo gasto: %g ms.\n", Tempo);
@@ -500,7 +517,7 @@ int main()
     }
     case 4:
     {
-        printf("\n\n***Opcao 4 selecionada: Programa automatico.\n\n");
+        printf("\n\n***Opção 4 selecionada: Programa automático.\n\n");
 
         // Programa COM threads COM semaforo
         printf("\n--> Programa COM threads COM semaforo:\n");
@@ -553,15 +570,15 @@ int main()
         getchar();
 
         // Comparação dos resultados
-        printf("\n--> Comparacao dos vetores dos programas:");
-        printf("\n\n->Remocao de numeros pares:\n ");
+        printf("\n--> Comparação dos vetores dos programas:");
+        printf("\n\n->Remoção de numeros pares:\n ");
 
-        printf("\nVetor com thread + semaforo e vetor sequencial sao iguais?");
+        printf("\nVetor com thread + semaforo e vetor sequencial são iguais?");
         verifica(vectorImparesSem, vectorImparesSemTh);
         printf("\nVetor com thread e vetor sequencial sao iguais?");
         verifica(vectorImpares, vectorImparesSemTh);
 
-        printf("\n\n->Remocao de numeros multiplos de cinco:\n ");
+        printf("\n\n->Remoção de números múltiplos de cinco:\n ");
 
         printf("\nVetor com thread + semaforo e vetor sequencial sao iguais?");
         verifica(vectorNaoMultiCincoSem, vectorNaoMultiCincoSemTh);
@@ -576,7 +593,7 @@ int main()
     }
     default:
     {
-        printf("Opcao invalida! Gentileza reiniciar programa.\n");
+        printf("Opção inválida! Gentileza reiniciar programa.\n");
         break;
     }
     }

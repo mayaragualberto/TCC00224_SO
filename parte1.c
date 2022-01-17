@@ -14,7 +14,7 @@ void *funcaoThread(void *threadid)
 
     /* Utilizando pthread_self() para obter o ID:
     ---> O valor retornado é chamado de ID de thread POSIX*/
-    printf("Eu sou a thread %s e meu ID é %lu\n", nomeDaThread, pthread_self());
+    printf("Eu sou a thread %s e meu ID é %lu.\n", nomeDaThread, pthread_self());
 
     /* Utilizando o gettid() para obter o ID:
     ---> Precisa incluir a biblioteca #include <sys/syscall.h>
@@ -32,6 +32,7 @@ void *funcaoThread(void *threadid)
 
 int main()
 {
+    printf("**** Parte 1 *****\n");
     printf("Insira a quantidade de threads a serem criadas:\n");
     int numeroDeThreads;
     scanf("%d",&numeroDeThreads);
