@@ -542,7 +542,7 @@ int main()
         getchar();
 
         // Programa COM threads SEM semaforo
-        printf("\n--> Programa COM threads sem semaforo:\n");
+        printf("\n--> Programa COM threads SEM semaforo:\n");
         clock_t Tempo_2[2];
         Tempo_2[0] = clock();
 
@@ -554,7 +554,7 @@ int main()
         // Medição do tempo de execução gasto
         Tempo_2[1] = clock();
         double TFinal_2 = (Tempo_2[1] - Tempo_2[0]) * 1000.0 / CLOCKS_PER_SEC;
-        printf("\nTempo gasto: %g ms.\n", TFinal_2);
+        printf("\nTempo gasto: %g ms.\n\n", TFinal_2);
         getchar();
 
         // Programa SEM threads
@@ -568,7 +568,7 @@ int main()
         // Medição do tempo de execução gasto
         Tempo_3[1] = clock();
         double TFinal_3 = (Tempo_3[1] - Tempo_3[0]) * 1000.0 / CLOCKS_PER_SEC;
-        printf("\nTempo gasto: %g ms.\n", TFinal_3);
+        printf("\nTempo gasto: %g ms.\n\n", TFinal_3);
         getchar();
 
         // Comparação dos resultados

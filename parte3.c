@@ -22,13 +22,13 @@ int main()
     int shdMemId2;
     int *shdMemRegion;
     int *shdMemRegion2;
-    int shdMemSize = 1000000; // Size in # of bytes
+    int shdMemSize = 1000000;
 
     // Criando uma nova região na memória compartilhada
     shdMemId = shmget(IPC_PRIVATE, shdMemSize, IPC_CREAT | 0666);
     if (shdMemId < 0)
     {
-        printf("Cannot create shared memory region!\n");
+        printf("Não é possível criar a região memória compartilhada!\n");
         exit(1);
     }
     printf("ID da memória compartilhada criada é: %i\n", shdMemId);
@@ -37,24 +37,24 @@ int main()
     shdMemId2 = shmget(IPC_PRIVATE, shdMemSize, IPC_CREAT | 0666);
     if (shdMemId2 < 0)
     {
-        printf("Cannot create shared memory region!\n");
+        printf("Não é possível criar a região memória compartilhada!\n");
         exit(1);
     }
     printf("ID da memória compartilhada criada é: %i\n", shdMemId2);
 
-    // Attach a new shared memory region
+    // Anexa uma nova região de memória compartilhada
     shdMemRegion = (int *)shmat(shdMemId, NULL, 0);
     if (shdMemRegion == (int *)-1)
     {
-        printf("Cannot attach shared memory region!\n");
+        printf("Não é possível anexar na região da memória compartilhada!\n");
         exit(1);
     }
 
-    // Attach a new shared memory region
+    // Anexa uma nova região de memória compartilhada
     shdMemRegion2 = (int *)shmat(shdMemId2, NULL, 0);
     if (shdMemRegion2 == (int *)-1)
     {
-        printf("Cannot attach shared memory region!\n");
+        printf("Não é possível anexar na região da memória compartilhada!\n");
         exit(1);
     }
 
@@ -72,6 +72,7 @@ int main()
             srand(time(NULL));
             int vectorRand[TAM];
             int *vectorRandVerifica = (int *)shdMemRegion2;
+            printf("\n\n*Processo filho iniciando processo.\n");
             printf("Vetor de tamanho %d criado. ", TAM);
             // Criando o vetor com os números aleatórios
             for (int i = 0; i < TAM; i++)
@@ -130,8 +131,11 @@ int main()
                     j--;
                 }
             }
-
-            // shmdt( shdMemRegion );
+            // Desacoplamento do segmento
+            shmdt(shdMemRegion);
+            shmdt(shdMemRegion2);
+            printf("\n\n*Processo filho passando para processo pai.\n");
+            sleep(1);
         }
         /*************************************
                         PROCESSO PAI
@@ -139,6 +143,7 @@ int main()
         else
         {
             wait(NULL); // Pai aguarda processo filho
+            printf("\n\n*Processo pai iniciando processo.\n");
             int *vectorRandRecebido = (int *)shdMemRegion;
             // Refinar o vector - retirar excedente
             int tamanho = 0;
@@ -175,8 +180,8 @@ int main()
                     j--;
                 }
             }
-            sleep(1);
             printf("\n\n*Processo pai irá verificar as respostas\n");
+            sleep(1);
 
             /*************************************
                  VERIFICAÇÃO DOS PROCESSOS
@@ -226,21 +231,22 @@ int main()
                 }
             }
 
-            // printf("\n\n**VETOR DOS PROCESSOS\n");
+            // // Para visualizar os vetores obtidos:
+            // printf("\n\n**VETOR DOS PROCESSOS: \n");
             // tamanho = sizeof(vectorImpares) / sizeof(vectorImpares[0]);
             // for (int i = 0; i < tamanho; i++)
             // {
             //     printf("%d ", vectorImpares[i]);
             // }
             // tamanho = sizeof(vectorImparesVerifica) / sizeof(vectorImparesVerifica[0]);
-            // printf("\n\n**VETOR SEQUENCIAL\n");
+            // printf("\n\n**VETOR SEQUENCIAL:\n");
             // for (int i = 0; i < tamanho; i++)
             // {
             //     printf("%d ", vectorImparesVerifica[i]);
             // }
 
             tamanho = sizeof(vectorImparesVerifica) / sizeof(vectorImparesVerifica[0]);
-            printf("\nO vetor obtido por processos é igual ao sequencial?\n");
+            printf("\n\nO vetor obtido por processos é igual ao sequencial?\n");
             bool iguais = true;
             for (int i = 0; i < tamanho; i++)
             {
